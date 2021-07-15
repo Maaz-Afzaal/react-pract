@@ -11,6 +11,7 @@ import Contact from './ContactUsComponent';
 import { COMMENTS } from '../shared/comments';
 import { PROMOTIONS } from '../shared/promotions';
 import { LEADERS } from '../shared/leaders';
+import About from './AboutComponent'
 class Main extends Component {
 
   constructor(props) {
@@ -44,12 +45,18 @@ class Main extends Component {
             />
         );
       }
+      const AboutPage=()=>{
+          return(
+              <About leader={this.state.leaders}/>
+          )
+      }
     //   const dDetail=this.state.dishes.filter((dish) => dish.id === this.state.selectedDish)[0];
     return (
       <div>
         <Header/>
         <Switch>
               <Route path='/home' component={HomePage} />
+              <Route exact path='/aboutus' component={AboutPage} />
               <Route exact path='/menu' component={() => <Menu dishes={this.state.dishes} />} />
               <Route path='/menu/:dishId' component={DishWithId} />
               <Route exact path='/contactus' component={Contact}/>

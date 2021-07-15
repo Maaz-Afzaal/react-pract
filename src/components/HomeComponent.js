@@ -2,15 +2,14 @@ import React from 'react';
 import { Card, CardImg, CardText, CardBody,
     CardTitle, CardSubtitle} from 'reactstrap';
 
-function RenderCard({item}) {
-
+function RenderCard(props) {
     return(
         <Card>
-            <CardImg src={item.image} alt={item.name} />
+            <CardImg src={props.item.image} alt={props.item.name} />
             <CardBody>
-            <CardTitle>{item.name}</CardTitle>
-            {item.designation ? <CardSubtitle>{item.designation}</CardSubtitle> : null }
-            <CardText>{item.description}</CardText>
+            <CardTitle>{props.item.name}</CardTitle>
+            {props.item.designation ? <CardSubtitle>{props.item.designation}</CardSubtitle> : null }
+            <CardText>{props.item.description}</CardText>
             </CardBody>
         </Card>
     );
