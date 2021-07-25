@@ -85,9 +85,18 @@ class Contact extends Component {
   // }
 
   handleSubmit(values) {
+    this.props.postFeedback(
+      values.firstname,
+      values.lastname,
+      values.telnum,
+      values.email,
+      values.agree,
+      values.contactType,
+      values.message,
+    );
     console.log('Current State is: ' + JSON.stringify(values));
     alert('Current State is: ' + JSON.stringify(values));
-    // this.props.resetFeedbackForm();
+    this.props.resetFeedbackForm();
     // event.preventDefault();
   }
   render() {
@@ -249,13 +258,17 @@ class Contact extends Component {
                             </FormGroup>
                         </Form> */}
             {/* <LocalForm onSubmit={(values) => this.handleSubmit(values)}> */}
-            <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
+            <Form
+              model="feedback"
+              onSubmit={(values) => this.handleSubmit(values)}
+            >
               <Row className="form-group m-1">
                 <Label htmlFor="firstname" md={2}>
                   First Name
                 </Label>
                 <Col md={10}>
                   <Control.text
+                    model=".firstname"
                     id="firstname"
                     name="firstname"
                     placeholder="First Name"
@@ -268,6 +281,7 @@ class Contact extends Component {
                   />
                   <Errors
                     className="text-danger"
+                    model=".firstname"
                     show="touched"
                     messages={{
                       required: 'Required',
@@ -283,6 +297,7 @@ class Contact extends Component {
                 </Label>
                 <Col md={10}>
                   <Control.text
+                    model=".lastname"
                     id="lastname"
                     name="lastname"
                     placeholder="Last Name"
@@ -295,6 +310,7 @@ class Contact extends Component {
                   />
                   <Errors
                     className="text-danger"
+                    model=".lastname"
                     show="touched"
                     messages={{
                       required: 'Required',
@@ -310,6 +326,7 @@ class Contact extends Component {
                 </Label>
                 <Col md={10}>
                   <Control.text
+                    model=".telnum"
                     id="telnum"
                     name="telnum"
                     placeholder="Tel. Number"
@@ -323,6 +340,7 @@ class Contact extends Component {
                   />
                   <Errors
                     className="text-danger"
+                    model=".telnum"
                     show="touched"
                     messages={{
                       required: 'Required',
@@ -339,6 +357,7 @@ class Contact extends Component {
                 </Label>
                 <Col md={10}>
                   <Control.text
+                    model=".email"
                     id="email"
                     name="email"
                     placeholder="Email"
@@ -350,6 +369,7 @@ class Contact extends Component {
                   />
                   <Errors
                     className="text-danger"
+                    model=".email"
                     show="touched"
                     messages={{
                       required: 'Required',
@@ -372,7 +392,11 @@ class Contact extends Component {
                   </div>
                 </Col>
                 <Col md={{ size: 3, offset: 1 }}>
-                  <Control.select name="contactType" className="form-control">
+                  <Control.select
+                    model=".contactType"
+                    name="contactType"
+                    className="form-control"
+                  >
                     <option>Tel.</option>
                     <option>Email</option>
                   </Control.select>
@@ -384,6 +408,7 @@ class Contact extends Component {
                 </Label>
                 <Col md={10}>
                   <Control.textarea
+                    model=".message"
                     id="message"
                     name="message"
                     rows="12"
@@ -398,7 +423,7 @@ class Contact extends Component {
                   </Button>
                 </Col>
               </Row>
-            </LocalForm>
+            </Form>
           </div>
         </div>
       </div>
