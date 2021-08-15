@@ -9,7 +9,7 @@ import {
 } from 'reactstrap';
 import { Loading } from './LoadingComponent';
 import { baseUrl } from '../shared/baseUrl';
-import { Stagger } from 'react-animation-component';
+
 function RenderCard({ item, isLoading, errMess }) {
   if (isLoading) {
     return <Loading />;

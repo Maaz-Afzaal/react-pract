@@ -24,6 +24,7 @@ import {
 import { Link } from 'react-router-dom';
 import { LocalForm, Control, Errors } from 'react-redux-form';
 import { baseUrl } from '../shared/baseUrl';
+import { func } from 'prop-types';
 const required = (val) => val && val.length;
 const maxLength = (len) => (val) => !val || val.length <= len;
 const minLength = (len) => (val) => val && val.length >= len;
@@ -133,6 +134,114 @@ class CommentForm extends Component {
     );
   }
 }
+class CommentEditForm extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isModalOpen: false,
+    };
+    this.toggleModal = this.toggleModal.bind(this);
+  }
+  toggleModal() {
+    this.setState({
+      isModalOpen: !this.state.isModalOpen,
+    });
+  }
+  handleSubmit(values) {
+    this.props.editComment(
+      this.props.Id,
+      this.props.dishId,
+      values.Rating,
+      values.firstname,
+      values.message,
+    );
+    // alert(
+    //   'Current State is: ' + JSON.stringify(values) + 'and' + this.props.dishId,
+    // );
+  }
+  render() {
+    return (
+      <>
+        <Button onClick={this.toggleModal}>Edit Comment </Button>
+        <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
+          <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
+          <ModalBody>
+            <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
+              <Row className="form-group m-1">
+                <Label htmlFor="Rating" md={12}>
+                  Rating
+                </Label>
+                <Col md={12}>
+                  <Control.select
+                    model=".Rating"
+                    id="Rating"
+                    className="form-control"
+                  >
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                  </Control.select>
+                </Col>
+              </Row>
+              <Row className="form-group m-1">
+                <Label htmlFor="firstname" md={12}>
+                  First Name
+                </Label>
+                <Col md={12}>
+                  <Control.text
+                    model=".firstname"
+                    id="firstname"
+                    name="firstname"
+                    placeholder="First Name"
+                    className="form-control"
+                    validators={{
+                      required,
+                      minLength: minLength(3),
+                      maxLength: maxLength(15),
+                    }}
+                  />
+                  <Errors
+                    className="text-danger"
+                    model=".firstname"
+                    show="touched"
+                    messages={{
+                      required: 'Required',
+                      minLength: 'Must be greater than 2 characters',
+                      maxLength: 'Must be 15 characters or less',
+                    }}
+                  />
+                </Col>
+              </Row>
+              <Row className="form-group m-1">
+                <Label htmlFor="message" md={12}>
+                  Your Feedback
+                </Label>
+                <Col md={12}>
+                  <Control.textarea
+                    model=".message"
+                    id="message"
+                    name="message"
+                    rows="6"
+                    className="form-control"
+                  />
+                </Col>
+              </Row>
+              <Row className="form-group m-1">
+                <Col>
+                  <Button type="submit" value="submit" color="primary">
+                    Submit
+                  </Button>
+                </Col>
+              </Row>
+            </LocalForm>
+          </ModalBody>
+        </Modal>
+      </>
+    );
+  }
+}
 function RenderDish({ dish }) {
   if (dish != null) {
     return (
@@ -150,34 +259,50 @@ function RenderDish({ dish }) {
     return <div></div>;
   }
 }
-function RenderComments({ comments, postComment, dishId }) {
-  if (comments == null) {
-    return <div></div>;
+class RenderComments extends Component {
+  DelComment(commentId) {
+    this.props.delComment(commentId);
   }
-  const cmnts = comments.map((comment) => {
+  render() {
+    if (this.props.comments == null) {
+      return <div></div>;
+    }
+    const cmnts = this.props.comments.map((comment) => {
+      return (
+        <li key={comment.id}>
+          <p>{comment.comment}</p>
+          <p>
+            -- {comment.author}, &nbsp;
+            {new Intl.DateTimeFormat('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: '2-digit',
+            }).format(new Date(comment.date))}
+          </p>
+          <button onClick={() => this.DelComment(comment.id)}>
+            delete Comment
+          </button>
+          <CommentEditForm
+            Id={comment.id}
+            dishId={this.props.dishId}
+            editComment={this.props.editComment}
+          />
+        </li>
+      );
+    });
     return (
-      <li key={comment.id}>
-        <p>{comment.comment}</p>
-        <p>
-          -- {comment.author}, &nbsp;
-          {new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: '2-digit',
-          }).format(new Date(comment.date))}
-        </p>
-      </li>
-    );
-  });
-  return (
-    <div className="col-12 col-md-5 m-1">
-      <h4> Comments </h4>
-      <ul className="list-unstyled">{cmnts}</ul>
-      <CommentForm dishId={dishId} postComment={postComment} />
-    </div>
-  );
-}
+      <div className="col-12 col-md-5 m-1">
+        <h4> Comments </h4>
+        <ul className="list-unstyled">{cmnts}</ul>
 
+        <CommentForm
+          dishId={this.props.dishId}
+          postComment={this.props.postComment}
+        />
+      </div>
+    );
+  }
+}
 function DishDetail(props) {
   if (props.isLoading) {
     return (
@@ -218,6 +343,8 @@ function DishDetail(props) {
             comments={props.comments}
             postComment={props.postComment}
             dishId={props.dish.id}
+            delComment={props.delComment}
+            editComment={props.editComment}
           />
         </div>
       </div>

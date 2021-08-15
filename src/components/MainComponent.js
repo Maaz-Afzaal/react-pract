@@ -21,6 +21,8 @@ import {
   fetchPromos,
   fetchLeaders,
   postFeedback,
+  delComment,
+  editComment,
 } from '../redux/ActionCreators';
 import { actions } from 'react-redux-form';
 const mapStateToProps = (state) => {
@@ -34,6 +36,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
   postComment: (dishId, rating, author, comment) =>
     dispatch(postComment(dishId, rating, author, comment)),
+  editComment: (Id, dishId, rating, author, comment) =>
+    dispatch(editComment(Id, dishId, rating, author, comment)),
   postFeedback: (
     firstname,
     lastname,
@@ -63,6 +67,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchComments: () => dispatch(fetchComments()),
   fetchPromos: () => dispatch(fetchPromos()),
   fetchLeaders: () => dispatch(fetchLeaders()),
+  delComment: (commentId) => dispatch(delComment(commentId)),
 });
 
 class Main extends Component {
@@ -112,7 +117,9 @@ class Main extends Component {
             (comment) => comment.dishId === parseInt(match.params.dishId, 10),
           )}
           commentsErrMess={this.props.comments.errMess}
+          editComment={this.props.editComment}
           postComment={this.props.postComment}
+          delComment={this.props.delComment}
         />
       );
     };

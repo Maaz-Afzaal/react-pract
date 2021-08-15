@@ -49,6 +49,52 @@ export const postComment = (dishId, rating, author, comment) => (dispatch) => {
       alert('Your comment could not be posted\nError: ' + error.message);
     });
 };
+export const editComment =
+  (Id, dishId, rating, author, comment) => (dispatch) => {
+    const newComment = {
+      dishId: dishId,
+      id: Id,
+      rating: rating,
+      author: author,
+      comment: comment,
+    };
+
+    newComment.date = new Date().toISOString();
+    return fetch(baseUrl + 'comments' + '/' + Id, {
+      method: 'PUT',
+      body: JSON.stringify(newComment),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'same-origin',
+    })
+      .then(
+        (response) => {
+          if (response.ok) {
+            return response;
+          } else {
+            var error = new Error(
+              'Error ' + response.status + ': ' + response.statusText,
+            );
+            error.response = response;
+            throw error;
+          }
+        },
+        (error) => {
+          throw error;
+        },
+      )
+      .then((response) => response.json())
+      .then((response) => dispatch(editCom(response)))
+      .catch((error) => {
+        console.log('post comments', error.message);
+        alert('Your comment could not be posted\nError: ' + error.message);
+      });
+  };
+export const editCom = (comments) => ({
+  type: ActionTypes.EDIT_COMMENT,
+  payload: comments,
+});
 export const postFeedback =
   (firstname, lastname, telnum, email, agree, contactTYpe, message) =>
   (dispatch) => {
@@ -164,6 +210,64 @@ export const commentsFailed = (errmess) => ({
 
 export const addComments = (comments) => ({
   type: ActionTypes.ADD_COMMENTS,
+  payload: comments,
+});
+export const delComment = (id) => (dispatch) => {
+  const ID = JSON.stringify(id);
+  return fetch(baseUrl + 'comments' + '/' + ID)
+    .then(
+      (response) => {
+        if (response.ok) {
+          return response;
+        } else {
+          var error = new Error(
+            'Error ' + response.status + ': ' + response.statusText,
+          );
+          error.response = response;
+          throw error;
+        }
+      },
+      (error) => {
+        var errmess = new Error(error.message);
+        throw errmess;
+      },
+    )
+    .then((response) => response.json())
+    .then((comment) => dispatch(deleteComments(comment)))
+    .catch((error) => dispatch(commentsFailed(error.message)));
+};
+export const deleteComments = (comment) => (dispatch) => {
+  const com = comment.id;
+  return fetch(baseUrl + 'comments' + '/' + comment.id, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'same-origin',
+  })
+    .then(
+      (response) => {
+        if (response.ok) {
+          return response;
+        } else {
+          var error = new Error(
+            'Error ' + response.status + ': ' + response.statusText,
+          );
+          error.response = response;
+          throw error;
+        }
+      },
+      (error) => {
+        var errmess = new Error(error.message);
+        throw errmess;
+      },
+    )
+    .then((response) => response.json())
+    .then(() => dispatch(deleteComments1(com)))
+    .catch((error) => dispatch(commentsFailed(error.message)));
+};
+export const deleteComments1 = (comments) => ({
+  type: ActionTypes.DELETE_COMMENT,
   payload: comments,
 });
 
